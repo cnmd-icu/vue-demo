@@ -7,7 +7,7 @@ const mode = process.env.NODE_ENV === 'production' ? 'production' : 'development
 module.exports = {
     mode,
     entry: {
-        'vue': ['vue']
+        vue: ['vue']
     },// 入口文件
     output: {
         filename: '[name].dll.[hash:8].js',
@@ -18,8 +18,8 @@ module.exports = {
         new CleanWebpackPlugin(),
         new webpack.DllPlugin({
             name: '[name]_dll_[hash:8]',
-            path: path.join(__dirname, 'dll', '[name].manifest.json')
-        }),
+            path: path.join(__dirname, 'dll', '[name].manifest.json'),
+        }),// 生成manifest.json文件
         new CompressionPlugin({
             algorithm: 'gzip',         //算法
             test: new RegExp(

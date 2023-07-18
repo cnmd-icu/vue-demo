@@ -77,22 +77,32 @@ module.exports = {
             }
         ]
     },// 模块
-    externals: {
-        'vue': 'vue',
+    entry: {
+        main: path.resolve(__dirname, '../src/main.js')
+    },// 入口文件
+    output: {
+        clean: true,// 清理dist文件夹
+        path: path.resolve(__dirname, '../dist')
+    },// 出口文件
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, '../src'),
+            '@assets': path.resolve(__dirname, '../src/assets')
+        },
+        extensions: ['.js', '.vue']// 自动解析确定的扩展
     },
-    // 排除不打包的文件
     plugins: [
         new webpack.DllReferencePlugin({
-            manifest: path.join(__dirname, '/dll/vue.manifest.json') // 指向生成的manifest.json
-        }),
+            manifest: path.join(__dirname, 'dll', 'vue.manifest.json')
+        }),// 告诉webpack使用了哪些动态链接库
         new AddAssetHtmlPlugin([
             {
-                filepath: path.join(__dirname, '/dll/vue.dll.529fbe27.js'), // 对应的 dll 文件路径
+                filepath: path.join(__dirname, 'dll', 'vue.dll.529fbe27.js'), // 对应的 dll 文件路径
                 outputPath: 'dll',   // 输出到build目录下的dll文件夹下,不设置的话默认输出到build下，比较乱;下面vendors同理
                 publicPath: `${process.env.REACT_APP_PUBLICPATH || './'}dll`,// publicPath是用来修改引用路径的，默认是引用build下的文件，但是我们输出到dll下了，所以需要设置这个值;下面vendors同理
             },
         ]),
-        new VueLoaderPlugin(),
+        new VueLoaderPlugin(),// vue-loader插件
         new webpack.DefinePlugin({
             __VUE_OPTIONS_API__: true,
             __VUE_PROD_DEVTOOLS__: false
@@ -118,18 +128,5 @@ module.exports = {
             ]
         })
     ],// 插件
-    entry: {
-        main: path.resolve(__dirname, '../src/main.js')
-    },// 入口文件
-    output: {
-        clean: true,// 清理dist文件夹
-        path: path.resolve(__dirname, '../dist')
-    },// 出口文件
-    resolve: {
-        alias: {
-            '@': path.resolve(__dirname, '../src'),
-            '@assets': path.resolve(__dirname, '../src/assets')
-        },
-        extensions: ['.js', '.vue']// 自动解析确定的扩展
-    },// 配置别名
+
 }
