@@ -4,7 +4,23 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 const isProduction = process.env.NODE_ENV === 'production'
-const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
+// const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
+
+// 路径获取
+const { resolve, getDlls, requireContext } = require("./utils/utils");
+
+const getManifest = dir => {
+    let fileName
+    const manifestList = requireContext(
+        path.resolve(__dirname, `dll/${dir}`),
+        false,
+        /\.manifest\.json$/
+    )
+    Object.keys(manifestList).forEach(name => {
+        fileName = name
+    })
+    return path.resolve(__dirname, `dll/${dir}/${fileName}.json`)
+}
 
 module.exports = {
     module: {
@@ -93,15 +109,17 @@ module.exports = {
     },
     plugins: [
         new webpack.DllReferencePlugin({
-            manifest: path.join(__dirname, 'dll', 'vue.manifest.json')
+            manifest: getManifest('vue')
         }),// 告诉webpack使用了哪些动态链接库
-        new AddAssetHtmlPlugin([
-            {
-                filepath: path.join(__dirname, 'dll', 'vue.dll.529fbe27.js'), // 对应的 dll 文件路径
-                outputPath: 'dll',   // 输出到build目录下的dll文件夹下,不设置的话默认输出到build下，比较乱;下面vendors同理
-                publicPath: `${process.env.REACT_APP_PUBLICPATH || './'}dll`,// publicPath是用来修改引用路径的，默认是引用build下的文件，但是我们输出到dll下了，所以需要设置这个值;下面vendors同理
-            },
-        ]),
+        // new AddAssetHtmlPlugin([
+        //     {
+        //         filepath: path.join(__dirname, 'dll', 'vue.dll.529fbe27.js'), // 对应的 dll 文件路径
+        //         outputPath: 'dll',   // 输出到build目录下的dll文件夹下,不设置的话默认输出到build下，比较乱;下面vendors同理
+        //         publicPath: `${process.env.REACT_APP_PUBLICPATH || './'}dll`,// publicPath是用来修改引用路径的，默认是引用build下的文件，但是我们输出到dll下了，所以需要设置这个值;下面vendors同理
+        //     },
+        // ]),
+
+
         new VueLoaderPlugin(),// vue-loader插件
         new webpack.DefinePlugin({
             __VUE_OPTIONS_API__: true,
@@ -110,7 +128,8 @@ module.exports = {
         new HtmlWebpackPlugin({
             inject: true,
             template: path.resolve(__dirname, '../public/index.html'),
-            title: 'This is a template'
+            title: 'This is a template',
+            dlls: getDlls()
         }),
         new CopyPlugin({
             patterns: [
@@ -121,9 +140,11 @@ module.exports = {
                         if (resourcePath.includes('/public/index.html')) {
                             return false
                         }
-
                         return true
                     }
+                }, {
+                    from: path.resolve(__dirname, '../build/dll'),
+                    to: path.resolve(__dirname, '../dist/dll'),
                 }
             ]
         })

@@ -8,18 +8,20 @@ module.exports = {
     mode,
     entry: {
         vue: ['vue']
-    },// 入口文件
+    },
     output: {
-        filename: '[name].dll.[hash:8].js',
-        path: path.resolve(__dirname, 'dll'),
-        library: '[name]_dll_[hash:8]'
+        filename: "[name]/[name].[chunkhash].dll.js",
+        path: path.join(__dirname, "dll"),
+        library: "[name]",
+        libraryTarget: "umd"
     },
     plugins: [
         new CleanWebpackPlugin(),
         new webpack.DllPlugin({
-            name: '[name]_dll_[hash:8]',
-            path: path.join(__dirname, 'dll', '[name].manifest.json'),
-        }),// 生成manifest.json文件
+            path: path.join(__dirname, "/dll/[name]", "[name].[chunkhash].manifest.json"),
+            name: "[name]"
+        }),
+
         new CompressionPlugin({
             algorithm: 'gzip',         //算法
             test: new RegExp(

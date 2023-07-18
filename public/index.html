@@ -8,6 +8,11 @@
     <title>
         <%= htmlWebpackPlugin.options.title %>
     </title>
+    <!-- dlls -->
+    <% for (let i of htmlWebpackPlugin.options.dlls) { %>
+        <script src="<%= i %>" type="module"></script>
+        <% } %>
+            <!-- built files will be auto injected -->
 </head>
 
 <body>
