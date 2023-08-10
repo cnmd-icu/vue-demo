@@ -77,16 +77,10 @@ exports.requireContext = requireContext
 
 // 获取 dll
 exports.getDlls = function () {
-  let dlls = ["vue"];
-  let dllNames = [];
-  for (let item of dlls) {
-    // const dllName = require(`../static/dll/${item}.manifest.json`).name.split(
-    //   "_"
-    // );
-    // dllNames.push(`./static/dll/${dllName[0]}.${dllName[1]}.dll.js`);
+    const dllNames = []
     let fileName
     const dllFileObj = requireContext(
-      path.resolve(__dirname, `../dll/${item}`),
+      path.resolve(__dirname, `../dll`),
       true,
       /\.manifest\.json$/
     )
@@ -96,7 +90,21 @@ exports.getDlls = function () {
     const dllName = fileName.split('.')
     dllNames.push(
       `./dll/${dllName[0]}/${dllName[0]}.${dllName[1]}.dll.js`
-    )
-  }
+  )
+  console.log(dllNames)
   return dllNames;
 };
+
+
+exports.getManifests = function () {
+  let fileName
+  const manifestList = requireContext(
+    path.resolve(__dirname, `../dll`),
+    true,
+    /\.manifest\.json$/
+  )
+  Object.keys(manifestList).forEach(name => {
+    fileName = name
+  })
+  return path.resolve(__dirname, `../dll/${fileName}.json`)
+}

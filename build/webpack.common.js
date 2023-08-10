@@ -7,19 +7,23 @@ const isProduction = process.env.NODE_ENV === 'production'
 // const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 
 // 路径获取
-const { resolve, getDlls, requireContext } = require("./utils/utils");
+const { resolve, getDlls, requireContext, getAllDirs } = require("./utils/utils");
 
-const getManifest = dir => {
+const getManifest = () => {
     let fileName
-    const manifestList = requireContext(
-        path.resolve(__dirname, `dll/${dir}`),
-        false,
-        /\.manifest\.json$/
-    )
-    Object.keys(manifestList).forEach(name => {
-        fileName = name
+    const files = getAllDirs(resolve('dll'))// 获取dll文件夹下的所有文件夹
+    files.forEach((file) => {
+        const manifestList = requireContext(
+            path.resolve(__dirname, `dll/${file}`),
+            true,
+            /\.manifest\.json$/
+        )
+        Object.keys(manifestList).forEach(name => {
+            fileName = name
+        })
     })
-    return path.resolve(__dirname, `dll/${dir}/${fileName}.json`)
+    console.log(fileName)   
+    return path.resolve(__dirname, `dll/${fileName}.json`)
 }
 
 module.exports = {
@@ -110,15 +114,15 @@ module.exports = {
     plugins: [
         new webpack.DllReferencePlugin({
             manifest: getManifest('vue')
-        }),// 告诉webpack使用了哪些动态链接库
+        }),
+        // 告诉webpack使用了哪些动态链接库
         // new AddAssetHtmlPlugin([
         //     {
-        //         filepath: path.join(__dirname, 'dll', 'vue.dll.529fbe27.js'), // 对应的 dll 文件路径
+        //         filepath: getDlls(), // 对应的 dll 文件路径
         //         outputPath: 'dll',   // 输出到build目录下的dll文件夹下,不设置的话默认输出到build下，比较乱;下面vendors同理
         //         publicPath: `${process.env.REACT_APP_PUBLICPATH || './'}dll`,// publicPath是用来修改引用路径的，默认是引用build下的文件，但是我们输出到dll下了，所以需要设置这个值;下面vendors同理
         //     },
         // ]),
-
 
         new VueLoaderPlugin(),// vue-loader插件
         new webpack.DefinePlugin({
