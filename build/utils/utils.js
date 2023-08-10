@@ -3,7 +3,8 @@ const fs = require("fs");
 
 const webpack = require("webpack");
 
-exports.resolve = dir => path.join(__dirname, "..", dir);
+resolve = dir => path.join(__dirname, "..", dir);
+exports.resolve = resolve;
 
 // 获取文件夹目录
 const getAllDirs = function (mypath = ".") {
@@ -72,7 +73,6 @@ const requireContext = (directory, recursive = true, regExp = /\.js$/) => {
   readDirectory(directory)
   return context
 }
-
 exports.requireContext = requireContext
 
 // 获取 dll
@@ -91,20 +91,22 @@ exports.getDlls = function () {
     dllNames.push(
       `./dll/${dllName[0]}/${dllName[0]}.${dllName[1]}.dll.js`
   )
-  console.log(dllNames)
   return dllNames;
 };
 
 
-exports.getManifests = function () {
+exports.getManifest = () => {
   let fileName
-  const manifestList = requireContext(
-    path.resolve(__dirname, `../dll`),
-    true,
-    /\.manifest\.json$/
-  )
-  Object.keys(manifestList).forEach(name => {
-    fileName = name
+  const files = fs.readdirSync(path.resolve(__dirname, "../dll"))
+  files.forEach((file) => {
+    const manifestList = requireContext(
+      path.resolve(__dirname, `../dll/${file}`),
+      true,
+      /\.manifest\.json$/
+    )
+    Object.keys(manifestList).forEach(name => {
+      fileName = file+"/"+name
+    })
   })
-  return path.resolve(__dirname, `../dll/${fileName}.json`)
+  return path.resolve(__dirname, "../dll", fileName+".json")
 }

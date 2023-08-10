@@ -2,9 +2,6 @@
   "name": "vue-project",
   "version": "0.0.0",
   "private": true,
-  "bin": {
-    "san-cli": "./bin/index.js"
-  },
   "scripts": {
     "dll": "webpack --config ./build/webpack.dll.config.js",
     "build:dev": "webpack --progress --config ./build/webpack.dev.js",

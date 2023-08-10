@@ -7,24 +7,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 // const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 
 // 路径获取
-const { resolve, getDlls, requireContext, getAllDirs } = require("./utils/utils");
-
-const getManifest = () => {
-    let fileName
-    const files = getAllDirs(resolve('dll'))// 获取dll文件夹下的所有文件夹
-    files.forEach((file) => {
-        const manifestList = requireContext(
-            path.resolve(__dirname, `dll/${file}`),
-            true,
-            /\.manifest\.json$/
-        )
-        Object.keys(manifestList).forEach(name => {
-            fileName = name
-        })
-    })
-    console.log(fileName)   
-    return path.resolve(__dirname, `dll/${fileName}.json`)
-}
+const { getDlls, getManifest } = require("./utils/utils");
 
 module.exports = {
     module: {
@@ -123,7 +106,6 @@ module.exports = {
         //         publicPath: `${process.env.REACT_APP_PUBLICPATH || './'}dll`,// publicPath是用来修改引用路径的，默认是引用build下的文件，但是我们输出到dll下了，所以需要设置这个值;下面vendors同理
         //     },
         // ]),
-
         new VueLoaderPlugin(),// vue-loader插件
         new webpack.DefinePlugin({
             __VUE_OPTIONS_API__: true,
