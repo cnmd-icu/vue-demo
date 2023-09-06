@@ -1,0 +1,16 @@
+# title
+VITE_TITLE = 大屏系统
+
+# port 端口号
+VITE_PORT = 8888
+
+# open 运行 npm run dev 时自动打开浏览器
+VITE_OPEN = false
+
+# 打包是否开启 cdn（源文件 build/cdnConfig.ts），可自行修改
+# 经测试，打包为cdn目前与AutoImport CDN功能冲突,或者关闭AutoImport Components功能就可以使用cdn
+# https://github.com/MMF-FE/vite-plugin-cdn-import/issues/13
+VITE_OPEN_CDN = false
+
+# 打包后是否生成包分析文件
+VITE_REPORT = false
